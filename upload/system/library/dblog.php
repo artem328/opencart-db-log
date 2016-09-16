@@ -16,18 +16,31 @@ class DBLog {
     protected $config;
 
     /**
+     * Global registry
+     *
      * @var Registry
      */
     protected $registry;
 
     /**
+     * Database handler instance
+     *
+     * @var DB
+     */
+    protected $db;
+
+    /**
      * DBLog constructor.
      *
+     * @param DB $db
      * @param string $filename Name of log file
      */
-    public function __construct($filename = null) {
+    public function __construct($db, $filename = null) {
+        $this->db = $db;
+
         /**
          * Getting global registry instance.
+         * Not really good solution
          *
          * @var Registry $registry
          */
@@ -53,12 +66,16 @@ class DBLog {
      * Add record for SQL query
      *
      * @param string $query SQL query to log
+     * @param bool|object Result of query
      */
-    public function write($query) {
+    public function write($query, $result) {
         if (!$this->shouldBeLogged($query))
             return;
 
         $record_data = array(
+            '%a' => $this->getAffectedRows(),
+            '%lid' => $this->getLastId(),
+            '%nr' => is_object($result) && isset($result->num_rows) ? $result->num_rows : 0,
             '%d' => $this->getDate(),
             '%q' => $query,
             '%u' => $this->getUser(),
@@ -362,6 +379,24 @@ class DBLog {
         return isset($trace['line']) ?
             $trace['line'] :
             $this->getConfig('dblog_unknown_line', $this->getConfig('dblog_unknown', 'Unknown'));
+    }
+
+    /**
+     * Returns number of rows that were affected by query
+     *
+     * @return int
+     */
+    protected function getAffectedRows() {
+        return $this->db->countAffected();
+    }
+
+    /**
+     * Return last auto incremented id
+     *
+     * @return int
+     */
+    protected function getLastId() {
+        return $this->db->getLastId();
     }
 
     /**

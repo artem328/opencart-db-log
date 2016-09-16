@@ -46,6 +46,7 @@ $_ = array(
      * Format of single log record
      *
      * Available variables:
+     * %a - Affected rows
      * %b - Backtrace
      *      @see dblog_backtrace_limit option
      *      @see dblog_skip_dblog_class_in_backtrace option
@@ -57,6 +58,8 @@ $_ = array(
      * %f - Filename where DB->query() was called
      * %fn - Function name where DB->query() was called
      * %l - Line number where DB->query() was called
+     * %lid - Last auto incremented ID
+     * %nr - Selected number of rows
      * %q - SQL query
      * %sb - Single backtrace record of where DB->query() was called
      *       @see dblog_trace_format option

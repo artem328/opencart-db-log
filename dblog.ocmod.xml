@@ -21,16 +21,20 @@
             </search>
             <add position="after">
                 <![CDATA[
-                $this->log = new DBLog();]]>
+                $this->log = new DBLog($this);
+                ]]>
             </add>
         </operation>
         <operation>
             <search>
-                <![CDATA[public function query($sql) {]]>
+                <![CDATA[return $this->db->query($sql);]]>
             </search>
-            <add position="after">
+            <add position="replace">
                 <![CDATA[
-                $this->log->write($sql);]]>
+                $result = $this->db->query($sql);
+                $this->log->write($sql, $result);
+                return $result;
+                ]]>
             </add>
         </operation>
     </file>
