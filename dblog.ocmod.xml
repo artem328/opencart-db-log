@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>DB Log</name>
+    <code>dblog</code>
+    <version>dev</version>
+    <author>Vozhzhov Artem</author>
+    <file path="system/library/db.php">
+        <operation>
+            <search>
+                <![CDATA[private $db;]]>
+            </search>
+            <add position="after">
+                <![CDATA[
+                private $log;
+                ]]>
+            </add>
+        </operation>
+        <operation>
+            <search>
+                <![CDATA[$this->db = new $class($hostname, $username, $password, $database, $port);]]>
+            </search>
+            <add position="after">
+                <![CDATA[
+                $this->log = new DBLog();]]>
+            </add>
+        </operation>
+        <operation>
+            <search>
+                <![CDATA[public function query($sql) {]]>
+            </search>
+            <add position="after">
+                <![CDATA[
+                $this->log->write($sql);]]>
+            </add>
+        </operation>
+    </file>
+</modification>
