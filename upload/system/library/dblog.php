@@ -55,6 +55,9 @@ class DBLog {
      * @param string $query SQL query to log
      */
     public function write($query) {
+        if (!$this->shouldBeLogged($query))
+            return;
+
         $record_data = array(
             '%d' => $this->getDate(),
             '%q' => $query,
@@ -384,5 +387,27 @@ class DBLog {
      */
     protected function templateDataSort($a, $b) {
         return strcasecmp($b, $a);
+    }
+
+    /**
+     * Determine if current query should be logged or no
+     *
+     * @param string $query
+     * @return bool
+     */
+    protected function shouldBeLogged($query) {
+        $commands = $this->getConfig('dblog_commands', array());
+
+        if (!$commands)
+            return true;
+
+        $query = strtolower(trim($query));
+
+        foreach ($commands as $command) {
+            if (strpos($query, $command) === 0)
+                return true;
+        }
+
+        return false;
     }
 }

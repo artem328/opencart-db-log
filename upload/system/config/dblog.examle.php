@@ -35,6 +35,14 @@ $_ = array(
     'dblog_split' => 'by_week',
 
     /**
+     * Commands that should be logged
+     * If array is empty then, all queries will be logged
+     *
+     * @var array
+     */
+    'dblog_commands' => array(),
+
+    /**
      * Format of single log record
      *
      * Available variables:
