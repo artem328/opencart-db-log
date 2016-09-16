@@ -92,7 +92,13 @@ class DBLog {
 
         return $default;
     }
-    
+
+    /**
+     * Returns name of log file
+     *
+     * @param string $dir Directory where log should be stored
+     * @return string Filename
+     */
     protected function getLogFilename($dir) {
         $filename = $this->getConfig('dblog_filename', 'db.log');
         $split = $this->getConfig('dblog_split', 'by_week');
@@ -154,7 +160,8 @@ class DBLog {
     }
 
     /**
-     * Returns date for log record
+     * Returns date
+     *
      * @return string Date string
      */
     protected function getDate() {
@@ -162,7 +169,9 @@ class DBLog {
     }
 
     /**
-     * Returns user info for log record
+     * Returns user information
+     *
+     * @return string
      */
     protected function getUser() {
         /** @var User|null $user */
@@ -182,6 +191,12 @@ class DBLog {
         );
     }
 
+    /**
+     * Return user information values
+     *
+     * @param bool $single Variables for independent use or in user info string
+     * @return array
+     */
     protected function getUserInfo($single = true) {
         /** @var User|null $user */
         $user = $this->registry->has('user') ? $this->registry->get('user') : null;
@@ -208,6 +223,8 @@ class DBLog {
     }
 
     /**
+     * Returns call stack
+     *
      * @return string
      */
     protected function getBackTrace() {
@@ -247,7 +264,9 @@ class DBLog {
     }
 
     /**
+     * Returns values for callee information
      *
+     * @return array
      */
     protected function getSingleBackTraceInfo() {
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
@@ -273,11 +292,18 @@ class DBLog {
         );
     }
 
+    /**
+     * Return string with callee information
+     *
+     * @return string
+     */
     protected function getSingleBackTrace() {
         return $this->fillTemplate($this->getConfig('dblog_trace_format', '%c%t%fn() in %f on line %l'), $this->getSingleBackTraceInfo());
     }
 
     /**
+     * Return class name from backtrace record
+     *
      * @param array $trace
      * @return string
      */
@@ -288,6 +314,8 @@ class DBLog {
     }
 
     /**
+     * Return function name from backtrace record
+     *
      * @param array $trace
      * @return string
      */
@@ -298,6 +326,8 @@ class DBLog {
     }
 
     /**
+     * Return function type from backtrace record
+     *
      * @param array $trace
      * @return string
      */
@@ -308,7 +338,9 @@ class DBLog {
     }
 
     /**
-     * @param $trace
+     * Return filename from backtrace record
+     *
+     * @param array $trace
      * @return string
      */
     protected function getFilename($trace) {
@@ -318,8 +350,10 @@ class DBLog {
     }
 
     /**
-     * @param $trace
-     * @return string
+     * Return line number from backtrace record
+     *
+     * @param array $trace
+     * @return int|string
      */
     protected function getLine($trace) {
         return isset($trace['line']) ?
@@ -328,15 +362,26 @@ class DBLog {
     }
 
     /**
-     * @param string $templateString
-     * @param array $data
-     * @return mixed
+     * Replaces variables with values
+     * in template string
+     *
+     * @param string $templateString String with variables
+     * @param array $data Array with values should be places instead of variable, and keys with variable names
+     * @return string String with values
      */
     protected function fillTemplate($templateString, $data) {
         uksort($data, array($this, 'templateDataSort'));
         return str_replace(array_keys($data), array_values($data), $templateString);
     }
 
+    /**
+     * Comparator function for template keys.
+     * Put values with longer key to start
+     *
+     * @param string $a
+     * @param string $b
+     * @return int
+     */
     protected function templateDataSort($a, $b) {
         return strcasecmp($b, $a);
     }
