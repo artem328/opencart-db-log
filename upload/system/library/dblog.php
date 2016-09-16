@@ -1,6 +1,8 @@
 <?php
 class DBLog {
 
+    const VERSION = '1.0.0';
+
     /**
      * Log file handler
      *
@@ -49,7 +51,9 @@ class DBLog {
         $this->registry = $registry;
 
         $this->config = new Config();
-        $this->config->load('dblog');
+
+        if (file_exists(DIR_CONFIG . 'dblog.php'))
+            $this->config->load('dblog');
 
         $dir = DIR_LOGS . trim($this->getConfig('dblog_dir', 'db'), '/\\') . '/';
 
@@ -90,7 +94,8 @@ class DBLog {
     }
 
     public function __destruct() {
-        fclose($this->handle);
+        if (is_resource($this->handle))
+            fclose($this->handle);
     }
 
     /**

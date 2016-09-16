@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
     <name>DB Log</name>
-    <code>dblog</code>
-    <version>dev</version>
+    <code>dblog_1.0.0</code>
+    <version>1.0.0</version>
     <author>Vozhzhov Artem</author>
     <file path="system/library/db.php">
         <operation>
